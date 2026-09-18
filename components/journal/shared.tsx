@@ -1,5 +1,5 @@
 'use client';
-import { Frown, Meh, Smile, SmilePlus, Plus } from 'lucide-react';
+import { Frown, Annoyed, Meh, Smile, SmilePlus, Plus } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { MOODS, todayKey } from '@/lib/journal';
 export const time = (s: string) => new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit' }).format(new Date(s));
@@ -11,13 +11,15 @@ export async function request<T>(url: string, init?: RequestInit) { const r = aw
     error?: string;
 }; if (!r.ok)
     throw new Error(body.error || '接続できませんでした'); return body; }
-const icons = [Frown, Frown, Meh, Smile, SmilePlus];
+const icons = [Frown, Annoyed, Meh, Smile, SmilePlus];
+export function MoodIcon({ score, size = 28 }: { score: number; size?: number }) { const Icon = icons[score - 1] ?? Meh; return <Icon size={size} strokeWidth={1.7} aria-hidden="true" />; }
 export function MoodButtons({ onPick, selected, disabled = false, label = 'その時の体調' }: {
     onPick: (n: number) => void;
     selected: number | null;
     disabled?: boolean;
     label?: string;
-}) { return <div className="moods" role="group" aria-label={label}>{MOODS.map((m, i) => { const Icon = icons[i]; return <button type="button" key={m.score} className={`mood mood-${m.score} ${selected === m.score ? 'chosen' : ''}`} disabled={disabled} onClick={() => onPick(m.score)} aria-pressed={selected === m.score} aria-label={`${label}${m.score} ${m.label}`}><Icon size={30} strokeWidth={1.5}/><span className="mood-word">{m.label}</span><span className="mood-num">{m.score}</span></button>; })}</div>; }
+}) { return <div className="moods" role="group" aria-label={label}>{MOODS.map(m => <button type="button" key={m.score} className={`mood mood-${m.score} ${selected === m.score ? 'chosen' : ''}`} disabled={disabled} onClick={() => onPick(m.score)} aria-pressed={selected === m.score} aria-label={`${label}${m.score} ${m.label}`} title={`${m.score} · ${m.label}`}><MoodIcon score={m.score}/></button>)}</div>; }
+
 export function TagPicker({ all, value, onChange, onAdd }: {
     all: string[];
     value: string[];
