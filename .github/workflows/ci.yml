@@ -1,0 +1,28 @@
+name: 検証
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+      - name: 依存を復元
+        run: pnpm install --frozen-lockfile
+      - name: 型検査
+        run: pnpm typecheck
+      - name: 集計・保存の回帰テスト
+        run: pnpm test
+      - name: 本番ビルド
+        run: pnpm build
