@@ -84,7 +84,7 @@
 .app-header{height:76px}.page-heading{margin:20px 0 14px}.page-heading .eyebrow{display:none}.page-heading h1{font-size:23px}
 .checkin-card{padding:14px 16px}.checkin-card h2{font-size:16px}.checkin-card .tap-hint{padding:2px 8px}
 .moods{margin:10px 0;gap:8px}.mood,.edit-fields .mood,.summary-editor .mood{min-height:48px;height:48px;padding:6px;border-radius:12px;flex-direction:row}.mood.chosen{box-shadow:inset 0 0 0 2px currentColor;background:color-mix(in srgb,var(--mood-color) 15%,var(--surface))}.mood svg,.summary-editor .mood svg{width:28px;height:28px}
-.checkin-card .composer{padding-top:4px}.checkin-card .composer textarea{min-height:38px;height:38px;padding:5px 0;line-height:1.6;resize:vertical}.checkin-card .composer textarea:focus{min-height:64px}.checkin-card .composer-footer{margin-top:8px}.checkin-card:not(.expanded) .tag-wrap{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;padding:3px 0 5px}.checkin-card .tag-chip[data-slot=toggle-group-item]{flex-shrink:0;min-height:36px;height:36px;padding:0 10px;font-size:14px}.checkin-card .tag-add{flex-shrink:0;min-width:36px;min-height:36px}.checkin-card .send-button{min-height:40px;padding:6px 18px}.checkin-card .details-toggle{min-height:40px}
+.checkin-card .composer{padding-top:4px}.checkin-card .composer textarea{min-height:38px;height:38px;padding:5px 0;line-height:1.6;resize:vertical}.checkin-card .composer textarea:focus{min-height:38px}.checkin-card .composer-footer{margin-top:8px}.checkin-card:not(.expanded) .tag-wrap{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;padding:3px 0 5px}.checkin-card .tag-chip[data-slot=toggle-group-item]{flex-shrink:0;min-height:36px;height:36px;padding:0 10px;font-size:14px}.checkin-card .tag-add{flex-shrink:0;min-width:36px;min-height:36px}.checkin-card .send-button{min-height:40px;padding:6px 18px}.checkin-card .details-toggle{min-height:40px}
 .entry{gap:12px;align-items:flex-start;margin-bottom:12px}.entry-rail{width:44px;flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:8px}.entry-mood{color:var(--mood-color);height:30px;display:grid;place-items:center}.entry-time{padding:0;min-width:0;font-size:12px}.entry-bubble{position:relative;min-height:60px;padding:10px 46px 10px 14px}.entry-top{position:absolute;right:4px;top:7px;min-height:0}.entry-top .icon-button{width:36px;height:36px}.entry-note{margin:0;line-height:1.65}.entry-tags{gap:0 10px}.entry-tags button{min-height:32px}.timeline-section{margin-top:22px}
 /* 試験的な配置は色のテーマとは独立させる。保存ロジックは共通。 */
 .layout-options[data-slot=toggle-group]{display:flex;flex-direction:column;gap:10px;width:100%}.layout-option[data-slot=toggle-group-item]{width:100%;height:auto;min-height:90px;display:flex;gap:14px;padding:12px;white-space:normal;text-align:left;border:1px solid var(--border);border-radius:10px!important;justify-content:flex-start}.layout-option[data-state=on]{outline:2px solid var(--primary);background:var(--surface-soft)}.layout-option>span:nth-child(2){flex:1}.layout-option strong{display:block;font-size:16px}.layout-option small{display:block;color:var(--muted-foreground);font-size:14px}.layout-mini{display:grid;width:75px;height:58px;flex:none;gap:4px;padding:5px;border:1px solid var(--border);border-radius:4px;background:var(--background);grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr}.layout-mini i,.layout-mini b,.layout-mini em{background:var(--primary);opacity:.45;border-radius:2px}.layout-mini i{opacity:.85}.layout-mini em{grid-column:2;grid-row:1/3}.layout-mini-notebook{grid-template-columns:1fr;grid-template-rows:1fr 1fr 1fr}.layout-mini-notebook em{grid-column:auto;grid-row:auto}.layout-mini-studio{grid-template-columns:1fr 2fr}.layout-mini-studio i{grid-row:1/3}.layout-mini-studio em{grid-row:auto;grid-column:auto}
@@ -92,3 +92,39 @@
 @media(min-width:781px){.app-shell[data-layout=studio]{max-width:1440px}.app-shell[data-layout=studio] .record-grid{display:block}.app-shell[data-layout=studio] .record-main{display:grid;grid-template-columns:minmax(280px,350px) minmax(0,1fr);gap:32px;align-items:start}.app-shell[data-layout=studio] .checkin-card{position:sticky;top:20px}.app-shell[data-layout=studio] .timeline-section{margin-top:0}.app-shell[data-layout=studio] .summary-column{display:none}.app-shell[data-layout=studio] .calendar-layout{grid-template-columns:minmax(280px,350px) minmax(0,1fr)}.app-shell[data-layout=studio] .summary-editor{grid-column:1;grid-row:1}.app-shell[data-layout=studio] .calendar-card{grid-column:2;grid-row:1}}
 @media(max-width:780px){.app-shell{padding:0 16px}.app-header{height:64px}.brand{font-size:21px}.brand-icon{height:34px;width:34px}.private-label{display:none}.main-nav[data-slot=tabs-list],.main-nav [data-slot=tabs-trigger]{height:48px}.page-heading{margin:16px 0 10px}.page-heading h1{font-size:21px}.checkin-card{padding:12px}.moods{gap:6px}.entry{gap:8px}.entry-bubble{padding:10px 42px 10px 12px}.entry-rail{width:36px}.app-shell[data-layout=studio]{padding-bottom:76px}.app-shell[data-layout=studio] .main-nav[data-slot=tabs-list]{position:fixed;bottom:0;left:0;right:0;z-index:30;height:calc(62px + env(safe-area-inset-bottom));padding:0 16px env(safe-area-inset-bottom);background:var(--background);border-top:1px solid var(--border);gap:4px}.app-shell[data-layout=studio] .main-nav [data-slot=tabs-trigger]{flex:1;height:60px;flex-direction:column;gap:3px;font-size:12px}.app-shell[data-layout=studio] .checkin-card{border-radius:20px}.app-shell[data-layout=studio] .entry{padding:10px 0;border-bottom:1px solid var(--border)}.app-shell[data-layout=studio] .entry-bubble{border:0;background:transparent}.app-shell[data-layout=studio] .calendar-layout{flex-direction:column-reverse}}
 .checkin-card .section-heading{margin-bottom:0}.timeline-section>.section-heading .eyebrow{display:none}.entry.score-only .entry-bubble{min-height:48px;background:transparent;border:0;box-shadow:none}.entry.score-only .entry-rail{padding-top:2px}.entry.score-only .entry-top{top:4px}
+/* 常設ナビゲーションとグループ別のタグ */
+.app-shell{padding-bottom:calc(100px + env(safe-area-inset-bottom))}
+.app-shell .main-nav{position:fixed;z-index:40;bottom:0;left:0;right:0;top:auto;width:100%;max-width:none;margin:0;border:0;border-top:1px solid var(--border);border-radius:0;padding:8px max(16px,calc((100vw - 800px)/2)) calc(8px + env(safe-area-inset-bottom));height:auto;background:var(--background);box-shadow:0 -8px 30px #00000012;display:flex;justify-content:center;gap:6px}
+.app-shell .main-nav [role=tab]{flex:1;min-height:48px;white-space:nowrap;gap:8px;font-size:14px;padding:10px}
+.app-shell .calendar-layout{display:block;max-width:900px;margin:auto}
+.calendar-dialog{max-height:90dvh;overflow:auto}
+.calendar-dialog .summary-editor{background:none;border:0;padding:0;box-shadow:none}
+.calendar-dialog .summary-editor>.section-heading{display:none}
+.tag-group-tabs{display:flex;gap:6px;overflow:auto;padding:4px 0 8px}
+.tag-group-tabs button{white-space:nowrap;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted-foreground);font-size:14px;padding:6px 10px}
+.tag-group-tabs button[aria-pressed=true]{background:var(--accent);color:var(--accent-foreground)}
+.tag-quantities{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.tag-quantity{display:flex;align-items:center;gap:8px;font-size:14px;border:1px solid var(--border);border-radius:10px;padding:5px 9px;max-width:100%}
+.tag-quantity span{overflow-wrap:anywhere}
+.tag-quantity input{width:70px;min-width:50px;background:var(--background);border:1px solid var(--border);color:var(--foreground);border-radius:6px;padding:7px;font-size:16px}
+.tag-quantity small{font-size:12px;white-space:nowrap;color:var(--muted-foreground)}
+.tag-management{border:0;padding:0;min-width:0}
+.tag-manager-group{border:1px solid var(--border);border-radius:16px;padding:18px;margin:16px 0;background:var(--card)}
+.tag-manager-group h2{font-size:16px;font-weight:600;margin:0 0 10px}
+.tag-manager-group .section-heading h2{margin:0}
+.managed-tags{display:flex;gap:8px;flex-wrap:wrap}
+.managed-tags>.tag-chip{display:inline-flex;gap:8px;padding:9px 12px;height:auto}
+.managed-tags small{color:var(--muted-foreground);font-size:12px}
+.managed-tag{display:flex;align-items:center;gap:9px;background:var(--background);border:1px solid var(--border);border-radius:10px;padding:11px 12px;font-size:14px;max-width:100%;overflow-wrap:anywhere}
+.managed-tag:hover{border-color:var(--primary)}
+.group-create{display:flex;gap:8px;align-items:center;margin-top:20px;max-width:520px}
+.group-create input{margin:0;flex:1;min-width:0}
+.group-create button{display:flex;align-items:center;gap:6px;border:1px solid var(--border);padding:11px;border-radius:10px;white-space:nowrap}
+.tag-edit-fields{display:flex;flex-direction:column;gap:16px;border:0;min-width:0}
+.tag-edit-fields label{font-size:14px;display:block}
+.tag-edit-fields .checkbox-label{display:flex;align-items:center;gap:10px}
+.checkbox-label input{width:20px;height:20px;accent-color:var(--primary)}
+.tag-edit-fields .form-hint{margin:0}
+select.text-input{color:var(--foreground);background:var(--background)}
+.journal-dialog{max-height:90dvh;overflow-y:auto}
+@media(max-width:600px){.app-shell .main-nav{gap:0;padding-left:4px;padding-right:4px}.app-shell .main-nav [role=tab]{flex-direction:column;gap:4px;font-size:12px;padding:6px 2px;min-height:54px}.tag-manager-group{padding:14px}.page-heading .primary-button{font-size:13px;padding:9px}.calendar-dialog .moods{margin-top:8px}}

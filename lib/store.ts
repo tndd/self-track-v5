@@ -1,6 +1,6 @@
 import { todayKey, type EntryInput, type EntryPatch, type Entry, type DailySummary } from './journal.ts';
-const columns = 'id,date,recorded_at AS recordedAt,score,note,tags,updated_at AS updatedAt';
-const unpack = (row: Record<string, unknown>) => ({ ...row, tags: JSON.parse(row.tags as string) }) as Entry;
+const columns = 'id,date,recorded_at AS recordedAt,score,note,tags,quantities,updated_at AS updatedAt';
+const unpack = (row: Record<string, unknown>) => ({ ...row, tags: JSON.parse(row.tags as string), quantities: JSON.parse((row.quantities as string) || '{}') }) as Entry;
 export async function listEntries(db: D1Database, user: string, params: URLSearchParams) {
     const where = ['user_id=?'];
     const args: (string | number)[] = [user];
@@ -33,12 +33,12 @@ export async function listEntries(db: D1Database, user: string, params: URLSearc
 }
 export async function createEntry(db: D1Database, user: string, v: EntryInput) {
     const recordedAt = new Date(v.recordedAt).toISOString();
-    await db.prepare('INSERT INTO entries (id,user_id,date,recorded_at,score,pain,note,tags,updated_at) VALUES (?,?,?,?,?,NULL,?,?,?) ON CONFLICT(user_id,id) DO NOTHING').bind(v.id, user, todayKey(new Date(recordedAt)), recordedAt, v.score, v.note, JSON.stringify([...new Set(v.tags)]), new Date().toISOString()).run();
+    await db.prepare('INSERT INTO entries (id,user_id,date,recorded_at,score,pain,note,tags,quantities,updated_at) VALUES (?,?,?,?,?,NULL,?,?,?,?) ON CONFLICT(user_id,id) DO NOTHING').bind(v.id, user, todayKey(new Date(recordedAt)), recordedAt, v.score, v.note, JSON.stringify([...new Set(v.tags)]), JSON.stringify(v.quantities ?? {}), new Date().toISOString()).run();
     return getEntry(db, user, v.id);
 }
 export async function updateEntry(db: D1Database, user: string, v: EntryPatch) {
     // 元の日時・日付と既存の旧疼痛データは変更しない。
-    const result = await db.prepare('UPDATE entries SET score=?,note=?,tags=?,updated_at=? WHERE user_id=? AND id=?').bind(v.score, v.note, JSON.stringify([...new Set(v.tags)]), new Date().toISOString(), user, v.id).run();
+    const result = await db.prepare('UPDATE entries SET score=?,note=?,tags=?,quantities=?,updated_at=? WHERE user_id=? AND id=?').bind(v.score, v.note, JSON.stringify([...new Set(v.tags)]), JSON.stringify(v.quantities ?? {}), new Date().toISOString(), user, v.id).run();
     return result.meta.changes ? getEntry(db, user, v.id) : null;
 }
 async function getEntry(db: D1Database, user: string, id: string) { const row = await db.prepare(`SELECT ${columns} FROM entries WHERE user_id=? AND id=?`).bind(user, id).first(); return row ? unpack(row) : null; }

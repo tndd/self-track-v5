@@ -3,15 +3,15 @@ export const TIMEZONE = 'Asia/Tokyo';
 export const todayKey = (d = new Date()) => new Intl.DateTimeFormat('sv-SE', { timeZone: TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
 export const shiftDay = (s: string, n: number) => new Date(new Date(s + 'T12:00:00+09:00').getTime() + n * 86400000).toISOString().slice(0, 10);
 export const daySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(s => !Number.isNaN(Date.parse(s + 'T00:00:00Z')) && new Date(s + 'T00:00:00Z').toISOString().slice(0, 10) === s, '日付を確認してください').refine(s => s <= todayKey(), '未来の日付には記録できません');
-const fields = { score: z.number().int().min(1).max(5).nullable(), note: z.string().trim().max(4000), tags: z.array(z.string().trim().min(1).max(30)).max(20) };
+const fields = { score: z.number().int().min(1).max(5).nullable(), note: z.string().trim().max(4000), tags: z.array(z.string().trim().min(1).max(30)).max(20), quantities: z.record(z.string().min(1).max(30), z.number().finite().positive().max(1000000)).optional() };
 const hasContent = (e: {
     score: number | null;
     note: string;
     tags: string[];
 }) => e.score !== null || e.note.length > 0 || e.tags.length > 0;
-export const entrySchema = z.object({ id: z.string().uuid(), recordedAt: z.string().datetime({ offset: true }), ...fields }).strict().refine(hasContent, '体調・メモ・タグのいずれかを記録してください').refine(e => Date.parse(e.recordedAt) <= Date.now() + 60000, '未来の時刻には記録できません');
+export const entrySchema = z.object({ id: z.string().uuid(), recordedAt: z.string().datetime({ offset: true }), ...fields }).strict().refine(e => Object.keys(e.quantities ?? {}).every(t => e.tags.includes(t)), '数量は選択したタグにだけ設定できます').refine(hasContent, '体調・メモ・タグのいずれかを記録してください').refine(e => Date.parse(e.recordedAt) <= Date.now() + 60000, '未来の時刻には記録できません');
 // 編集リクエストには日時を含めない。記録日時はサーバー側でも変更しない。
-export const entryPatchSchema = z.object({ id: z.string().uuid(), ...fields }).strict().refine(hasContent, '体調・メモ・タグのいずれかを記録してください');
+export const entryPatchSchema = z.object({ id: z.string().uuid(), ...fields }).strict().refine(e => Object.keys(e.quantities ?? {}).every(t => e.tags.includes(t)), '数量は選択したタグにだけ設定できます').refine(hasContent, '体調・メモ・タグのいずれかを記録してください');
 export const summarySchema = z.object({ date: daySchema, score: z.number().int().min(1).max(5), note: z.string().trim().max(4000) }).strict();
 export type EntryInput = z.infer<typeof entrySchema>;
 export type EntryPatch = z.infer<typeof entryPatchSchema>;
@@ -67,7 +67,7 @@ export type Overview = {
 };
 export function calendarDates(month: string) { const first = month + '-01'; const offset = (new Date(first + 'T12:00:00+09:00').getUTCDay() + 6) % 7; return Array.from({ length: 42 }, (_, i) => shiftDay(first, i - offset)); }
 export function csvContent(entries: Entry[], summaries: DailySummary[]) {
-    const rows = [['種別', '記録日時（ISO）', '日付（日本時間）', '体調（1〜5）', 'タグ', 'コメント', '作成日時', '更新日時'], ...entries.map(e => ['その時の記録', e.recordedAt, e.date, e.score ?? '', e.tags.join(' | '), e.note, e.recordedAt, e.updatedAt]), ...summaries.map(s => ['一日の総括', '', s.date, s.score, '', s.note, s.createdAt, s.updatedAt])];
+    const rows = [['種別', '記録日時（ISO）', '日付（日本時間）', '体調（1〜5）', 'タグ', 'コメント', '作成日時', '更新日時'], ...entries.map(e => ['その時の記録', e.recordedAt, e.date, e.score ?? '', e.tags.map(t => `${t} ×${e.quantities?.[t] ?? 1}`).join(' | '), e.note, e.recordedAt, e.updatedAt]), ...summaries.map(s => ['一日の総括', '', s.date, s.score, '', s.note, s.createdAt, s.updatedAt])];
     const cell = (v: unknown) => '"' + String(v).replace(/^[\s]*[=+@-]/, "'$&").replaceAll('"', '""') + '"';
     return '\uFEFF' + rows.map(r => r.map(cell).join(',')).join('\r\n');
 }
