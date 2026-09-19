@@ -1,7 +1,6 @@
 'use client';
-import { useState } from 'react';
 import { type Catalog, FREQUENT, frequentTags } from '@/lib/tags';
-import { Frown, Annoyed, Meh, Smile, SmilePlus, Plus } from 'lucide-react';
+import { Frown, Annoyed, Meh, Smile, SmilePlus, Plus, Folder, Clock, Hash } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { MOODS, todayKey } from '@/lib/journal';
 export const time = (s: string) => new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit' }).format(new Date(s));
@@ -22,18 +21,20 @@ export function MoodButtons({ onPick, selected, disabled = false, label = 'そ�
     label?: string;
 }) { return <div className="moods" role="group" aria-label={label}>{MOODS.map(m => <button type="button" key={m.score} className={`mood mood-${m.score} ${selected === m.score ? 'chosen' : ''}`} disabled={disabled} onClick={() => onPick(m.score)} aria-pressed={selected === m.score} aria-label={`${label}${m.score} ${m.label}`} title={`${m.score} · ${m.label}`}><MoodIcon score={m.score}/></button>)}</div>; }
 
-export function TagPicker({ all, value, onChange, onAdd, catalog, usage = {}, expanded = true, quantities = {}, onQuantities }: {
+export function TagPicker({ all, value, onChange, onAdd, catalog, usage = {}, recent = [], expanded = true, quantities = {}, onQuantities }: {
     all: string[]; value: string[]; onChange: (v: string[]) => void; onAdd: () => void;
-    catalog?: Catalog; usage?: Record<string, number>; expanded?: boolean;
+    catalog?: Catalog; usage?: Record<string, number>; recent?: string[]; expanded?: boolean;
     quantities?: Record<string, number>; onQuantities?: (v: Record<string, number>) => void;
 }) {
-    const [group, setGroup] = useState(FREQUENT);
     const active = catalog?.tags.filter(t => !t.archived) ?? [];
-    const frequent = catalog ? frequentTags(catalog, usage).map(t => t.name) : all.slice(0, 6);
-    const quick = frequent.length ? frequent : active.slice(0, 6).map(t => t.name);
-    const choices = catalog ? expanded && group !== FREQUENT ? active.filter(t => t.group === group).map(t => t.name) : quick : all;
-    const shown = [...new Set([...choices, ...value])];
-    return <div className="tag-picker">{expanded && catalog && <div className="tag-group-tabs" role="group" aria-label="タグのグループ">{[FREQUENT, ...catalog.groups].map(g => <button type="button" key={g} aria-pressed={group === g} onClick={() => setGroup(g)}>{g}</button>)}</div>}
-    <div className="tag-wrap"><ToggleGroup type="multiple" value={value} onValueChange={onChange} className="tag-group" spacing={1} aria-label="記録のタグ">{shown.map(t => <ToggleGroupItem value={t} key={t} className="tag-chip">#{t}</ToggleGroupItem>)}</ToggleGroup><button type="button" className="tag-add" onClick={onAdd} aria-label="新しいタグを追加"><Plus size={18}/></button></div>
-    {onQuantities && value.some(t => catalog?.tags.find(d => d.name === t)?.quantified || (quantities[t] ?? 1) !== 1) && <div className="tag-quantities">{value.filter(t => catalog?.tags.find(d => d.name === t)?.quantified || (quantities[t] ?? 1) !== 1).map(t => <label className="tag-quantity" key={t}><span>#{t}</span><input aria-label={`${t}の数量`} type="number" min="0.01" max="1000000" step="any" value={Number.isNaN(quantities[t]) ? '' : quantities[t] ?? 1} onChange={e => onQuantities({ ...quantities, [t]: e.target.valueAsNumber })}/><small>{catalog?.tags.find(d => d.name === t)?.unit || '数量'}</small></label>)}</div>}</div>;
+    const quick = recent.filter(t => active.some(a => a.name === t)).slice(0, 6);
+    const shown = [...new Set([...(quick.length ? quick : active.slice(0, 6).map(t => t.name)), ...value])];
+    const frequent = catalog ? frequentTags(catalog, usage).map(t => t.name) : [];
+    const chips = (names: string[], label: string) => <ToggleGroup type="multiple" value={value} onValueChange={next => onChange([...value.filter(t => !names.includes(t)), ...next.filter(t => names.includes(t))])} className="tag-group" spacing={1} aria-label={label}>{names.map(t => <ToggleGroupItem value={t} key={t} className="tag-chip">#{t}</ToggleGroupItem>)}</ToggleGroup>;
+    return <div className="tag-picker">
+      <div className="tag-quick-label"><Clock size={13}/>{quick.length ? '最近使ったタグ' : 'タグを選ぶ'}</div>
+      <div className="tag-wrap">{chips(catalog ? shown : all, '最近のタグ')}<button type="button" className="tag-add" onClick={onAdd} aria-label="新しいタグを追加"><Plus size={18}/></button></div>
+      {expanded && catalog && <div className="tag-folders" aria-label="グループ別のタグ">{[...(frequent.length ? [{name: FREQUENT, tags: frequent}] : []), ...catalog.groups.map(g => ({name: g, tags: active.filter(t => t.group === g).map(t => t.name)}))].map(g => <details className="tag-folder" key={g.name} open><summary><Folder size={18}/><span>{g.name}</span><small>{g.tags.length}</small></summary><div className="tag-wrap">{g.tags.length ? chips(g.tags, `${g.name}のタグ`) : <span className="metadata">タグはまだありません</span>}</div></details>)}</div>}
+      {onQuantities && value.length > 0 && <details className="quantity-options" key={value.length ? 'selected' : 'empty'}><summary><Hash size={15}/>数量・強度 <small>任意{value.some(t => (quantities[t] ?? 1) !== 1) ? ' · 設定あり' : ''}</small></summary><p className="form-hint">今回の記録だけに適用。変更しなければ1です。</p><div className="tag-quantities">{value.map(t => <label className="tag-quantity" key={t}><span>#{t}</span><input aria-label={`${t}の数量・強度`} type="number" min="0.01" max="1000000" step="any" value={Number.isNaN(quantities[t]) ? '' : quantities[t] ?? 1} onChange={e => onQuantities({ ...quantities, [t]: e.target.valueAsNumber })}/></label>)}</div></details>}
+    </div>;
 }

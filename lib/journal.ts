@@ -65,9 +65,14 @@ export type Overview = {
     summaries: DailySummary[];
     tags: string[];
 };
-export function calendarDates(month: string) { const first = month + '-01'; const offset = (new Date(first + 'T12:00:00+09:00').getUTCDay() + 6) % 7; return Array.from({ length: 42 }, (_, i) => shiftDay(first, i - offset)); }
+export function calendarDates(month: string) { const first = month + '-01'; const offset = (new Date(first + 'T12:00:00+09:00').getUTCDay() + 6) % 7; const last = new Date(Number(month.slice(0, 4)), Number(month.slice(5)), 0).getDate(); return Array.from({ length: Math.ceil((offset + last) / 7) * 7 }, (_, i) => shiftDay(first, i - offset)); }
 export function csvContent(entries: Entry[], summaries: DailySummary[]) {
     const rows = [['種別', '記録日時（ISO）', '日付（日本時間）', '体調（1〜5）', 'タグ', 'コメント', '作成日時', '更新日時'], ...entries.map(e => ['その時の記録', e.recordedAt, e.date, e.score ?? '', e.tags.map(t => `${t} ×${e.quantities?.[t] ?? 1}`).join(' | '), e.note, e.recordedAt, e.updatedAt]), ...summaries.map(s => ['一日の総括', '', s.date, s.score, '', s.note, s.createdAt, s.updatedAt])];
     const cell = (v: unknown) => '"' + String(v).replace(/^[\s]*[=+@-]/, "'$&").replaceAll('"', '""') + '"';
     return '\uFEFF' + rows.map(r => r.map(cell).join(',')).join('\r\n');
 }
+
+// 隣り合う投稿の間隔。日をまたぐ接続はしない。
+export function entryInterval(a: Entry, b: Entry) { return Math.abs(Date.parse(a.recordedAt) - Date.parse(b.recordedAt)); }
+export function entriesConnected(a: Entry, b: Entry) { return a.date === b.date && entryInterval(a, b) <= 3600000; }
+export function gapLabel(milliseconds: number) { const minutes = Math.floor(milliseconds / 60000), hours = Math.floor(minutes / 60); return `${hours ? hours + '時間' : ''}${minutes % 60 || !hours ? minutes % 60 + '分' : ''}`; }
