@@ -214,3 +214,4 @@ button,input,textarea,select{font:inherit}
 @media(max-width:600px){.page-heading{flex-wrap:wrap;gap:6px}.page-heading>div{min-width:0}.page-heading h1{white-space:nowrap}.page-heading>p{flex-basis:100%}.demo-banner .text-button{flex-shrink:0;font-size:11px}}
 
 .wave-data td button{min-height:36px;text-decoration:underline;text-underline-offset:3px}
+.composer-expanded-bar{display:flex;align-items:center;justify-content:flex-start;margin:0 0 8px;padding-bottom:8px;border-bottom:1px solid var(--border)}.composer-expanded-bar .details-toggle{min-height:36px;padding:3px 0;font-size:13px;font-weight:600}.details-toggle-bottom{width:34px;min-width:34px;height:32px;min-height:32px;padding:0;justify-content:center;border:1px solid var(--border);border-radius:999px;color:var(--muted-foreground)}.details-toggle-bottom:hover{background:var(--surface-soft);color:var(--primary)}
