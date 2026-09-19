@@ -37,7 +37,7 @@ export function dailyStats(entries: Entry[]): DayStat[] {
     const groups = new Map<string, Entry[]>();
     for (const e of entries)
         groups.set(e.date, [...(groups.get(e.date) || []), e]);
-    return [...groups].sort(([a], [b]) => a.localeCompare(b)).map(([date, items]) => { const scores = items.flatMap(e => e.score === null ? [] : [e.score]); return { date, score: mean(scores), count: items.length, scoreCount: scores.length, tags: [...new Set(items.flatMap(e => e.tags))] }; });
+    return [...groups].sort(([a], [b]) => a.localeCompare(b)).map(([date, items]) => { const scores = items.map(e => e.score ?? 3); return { date, score: mean(scores), count: items.length, scoreCount: scores.length, tags: [...new Set(items.flatMap(e => e.tags))] }; });
 }
 export function tagAssociations(days: DayStat[], mode: 'same' | 'next', summaries?: DailySummary[]) {
     const scores = new Map((summaries ?? days).map(d => [d.date, d.score]));
