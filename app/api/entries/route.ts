@@ -3,7 +3,7 @@ import { entrySchema, entryPatchSchema } from '@/lib/journal';
 import { createEntry, updateEntry, listEntries } from '@/lib/store';
 import { reply, identity, originAllowed, readBody } from '@/lib/server';
 export const dynamic = 'force-dynamic';
-export async function GET(req: Request) { const user = await identity(); if (!user)
+export async function GET(req: Request) { const user = await identity(req); if (!user)
     return reply({ error: 'サインインし直してください' }, 401); try {
     return reply(await listEntries(database(), user, new URL(req.url).searchParams));
 }
@@ -14,7 +14,7 @@ catch (e) {
 export async function POST(req: Request) { return save(req, false); }
 export async function PUT(req: Request) { return save(req, true); }
 async function save(req: Request, editing: boolean) {
-    const user = await identity();
+    const user = await identity(req);
     if (!user)
         return reply({ error: 'サインインし直してください' }, 401);
     if (!originAllowed(req))
@@ -38,7 +38,7 @@ async function save(req: Request, editing: boolean) {
         return reply({ error: '保存できませんでした。入力は残っています。再試行してください。' }, 503);
     }
 }
-export async function DELETE(req: Request) { const user = await identity(); if (!user)
+export async function DELETE(req: Request) { const user = await identity(req); if (!user)
     return reply({ error: 'サインインし直してください' }, 401); if (!originAllowed(req))
     return reply({ error: '送信元を確認できません' }, 403); const id = new URL(req.url).searchParams.get('id'); if (!id || !/^[0-9a-f-]{36}$/i.test(id))
     return reply({ error: '記録を確認してください' }, 400); try {

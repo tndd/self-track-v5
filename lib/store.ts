@@ -51,3 +51,15 @@ export async function saveSummary(db: D1Database, user: string, v: {
     await db.prepare('INSERT INTO daily_summaries (user_id,date,score,note,created_at,updated_at) VALUES (?,?,?,?,?,?) ON CONFLICT(user_id,date) DO UPDATE SET score=excluded.score,note=excluded.note,updated_at=excluded.updated_at').bind(user, v.date, v.score, v.note, now, now).run();
     return await db.prepare('SELECT date,score,note,created_at AS createdAt,updated_at AS updatedAt FROM daily_summaries WHERE user_id=? AND date=?').bind(user, v.date).first() as DailySummary;
 }
+
+export async function readOverview(db: D1Database, user: string) {
+        const [days, tags, summaries] = await db.batch<Record<string, unknown>>([
+            db.prepare('SELECT date,AVG(COALESCE(score,3)) AS score,COUNT(*) AS count,COUNT(*) AS scoreCount FROM entries WHERE user_id=? GROUP BY date ORDER BY date').bind(user),
+            db.prepare('SELECT DISTINCT date,value AS tag FROM entries,json_each(entries.tags) WHERE user_id=? ORDER BY date').bind(user),
+            db.prepare('SELECT date,score,note,created_at AS createdAt,updated_at AS updatedAt FROM daily_summaries WHERE user_id=? ORDER BY date').bind(user)
+        ]);
+        const tagMap = new Map<string, string[]>();
+        for (const t of tags.results)
+            tagMap.set(t.date as string, [...(tagMap.get(t.date as string) || []), t.tag as string]);
+        return { days: days.results.map(d => ({ ...d, tags: tagMap.get(d.date as string) || [] })), tags: [...new Set(tags.results.map(t => t.tag))], summaries: summaries.results };
+}
