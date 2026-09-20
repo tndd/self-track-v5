@@ -2,10 +2,12 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
 import { type Entry, type EntryPage, todayKey, shiftDay, gapLabel, entryInterval, MOODS } from '@/lib/journal';
-import { request, MoodIcon, time, dateText, RecordedTag } from './shared';
+import { useRequest, MoodIcon, time, dateText, RecordedTag } from './shared';
 
-export function TimeAxis({ revision, active = true, onEdit }: { revision: number; active?: boolean; onEdit?: (entry: Entry) => void }) {
-    const [date, setDate] = useState(todayKey), [retry, setRetry] = useState(0);
+export function TimeAxis({ revision, active = true, onEdit, selectedDate, onDateChange }: { revision: number; active?: boolean; selectedDate?: string; onDateChange?: (date: string) => void; onEdit?: (entry: Entry) => void }) {
+    const request = useRequest();
+    const [localDate, setLocalDate] = useState(todayKey), [retry, setRetry] = useState(0);
+    const date = selectedDate ?? localDate, setDate = onDateChange ?? setLocalDate;
     const [result, setResult] = useState<{ date: string; entries: Entry[]; error: string; loading: boolean }>({ date: '', entries: [], error: '', loading: true });
     useEffect(() => {
         if (!active) return;
@@ -29,10 +31,10 @@ export function TimeAxis({ revision, active = true, onEdit }: { revision: number
             } catch (e) { if (!cancelled) setResult({ date, entries: [], error: (e as Error).message, loading: false }); }
         })();
         return () => { cancelled = true; };
-    }, [date, revision, active, retry]);
+    }, [date, revision, active, retry, request]);
     const entries = result.date === date ? result.entries : [];
     return <section className="time-axis-section" aria-label="一日の時間軸"><div className="section-heading"><div><h2>一日の時間軸</h2><p className="form-hint">体調と行動を、起きた順に。</p></div></div>
-      <div className="axis-date-controls"><button className="icon-button" aria-label="時間軸の前日" onClick={() => setDate(shiftDay(date, -1))}><ChevronLeft/></button><input className="text-input" aria-label="時間軸の日付" type="date" value={date} max={todayKey()} onChange={e => { if (e.target.value && e.target.value <= todayKey()) setDate(e.target.value); }}/><button className="icon-button" aria-label="時間軸の翌日" disabled={date >= todayKey()} onClick={() => setDate(shiftDay(date, 1))}><ChevronRight/></button><button className="text-button" onClick={() => setDate(todayKey())}>今日</button></div>
+      <div className="axis-date-controls"><button className="icon-button" aria-label="時間軸の前日" onClick={() => setDate(shiftDay(date, -1))}><ChevronLeft/></button><input className="text-input" aria-label="時間軸の日付" type="date" value={date} max={todayKey()} onInput={e => { if (e.currentTarget.value && e.currentTarget.value <= todayKey() && e.currentTarget.value !== date) setDate(e.currentTarget.value); }} onChange={e => { if (e.target.value && e.target.value <= todayKey()) setDate(e.target.value); }}/><button className="icon-button" aria-label="時間軸の翌日" disabled={date >= todayKey()} onClick={() => setDate(shiftDay(date, 1))}><ChevronRight/></button><button className="text-button" onClick={() => setDate(todayKey())}>今日</button></div>
       <p className="metadata axis-caption">{dateText(date)} · {entries.length}件</p>
       {result.loading || result.date !== date ? <p className="form-hint" role="status">記録を読み込んでいます…</p> : result.error ? <div className="error-banner" role="alert">{result.error}<button onClick={() => setRetry(n => n + 1)}>再試行</button></div> : entries.length === 0 ? <div className="empty-state"><MessageCircle size={24}/><p>この日の記録はまだありません。</p></div> : <ol className="time-axis-list">{entries.map((entry, i) => {
           const previous = entries[i - 1], gap = previous ? entryInterval(previous, entry) : 0;

@@ -1,4 +1,5 @@
 'use client';
+import { createContext, useContext } from 'react';
 import { type Catalog, FREQUENT, frequentTags } from '@/lib/tags';
 import { Frown, Annoyed, Meh, Smile, SmilePlus, Plus, Minus, X, Tag, Check, Folder, Clock } from 'lucide-react';
 import { MOODS, todayKey } from '@/lib/journal';
@@ -7,10 +8,21 @@ export const dateText = (s: string) => new Intl.DateTimeFormat('ja-JP', { timeZo
 export const localInput = (s: string) => `${todayKey(new Date(s))}T${time(s)}`;
 export const fmt = (n: number | null | undefined) => n == null ? '—' : n.toFixed(1);
 export const makeId = () => { const b = crypto.getRandomValues(new Uint8Array(16)); b[6] = (b[6] & 15) | 64; b[8] = (b[8] & 63) | 128; const h = Array.from(b, v => v.toString(16).padStart(2, '0')).join(''); return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`; };
-export async function request<T>(url: string, init?: RequestInit) { const demo = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('demo') === '1'; const r = await fetch(url, { ...init, headers: { 'Content-Type': 'application/json', ...(demo ? { 'X-Shizuku-Dataset': 'demo' } : {}), ...init?.headers }, cache: 'no-store', signal: AbortSignal.timeout(20000) }); const body = await r.json() as T & {
-    error?: string;
-}; if (!r.ok)
-    throw new Error(body.error || '接続できませんでした'); return body; }
+export function datasetRequest(demo: boolean) {
+    return async function request<T>(url: string, init?: RequestInit): Promise<T> {
+        const headers = new Headers(init?.headers);
+        headers.set('Content-Type', 'application/json');
+        if (demo) headers.set('X-Shizuku-Dataset', 'demo');
+        const timeout = AbortSignal.timeout(20000);
+        const signal = init?.signal ? AbortSignal.any([init.signal, timeout]) : timeout;
+        const r = await fetch(url, { ...init, headers, cache: 'no-store', signal });
+        const body = await r.json() as T & { error?: string };
+        if (!r.ok) throw new Error(body.error || '接続できませんでした');
+        return body;
+    };
+}
+export const DatasetRequest = createContext(datasetRequest(false));
+export const useRequest = () => useContext(DatasetRequest);
 const icons = [Frown, Annoyed, Meh, Smile, SmilePlus];
 export function MoodIcon({ score, size = 28 }: { score: number; size?: number }) { const Icon = icons[score - 1] ?? Meh; return <Icon size={size} strokeWidth={1.7} aria-hidden="true" />; }
 export function MoodButtons({ onPick, selected, disabled = false, label = 'その時の体調' }: {

@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/compone
 import { toast } from 'sonner';
 import { type Overview, type DailySummary, todayKey, calendarDates, summarySchema, MOODS } from '@/lib/journal';
 import { MoodWave } from './mood-wave';
-import { MoodButtons, MoodIcon, fmt, dateText, request } from './shared';
+import { MoodButtons, MoodIcon, fmt, dateText, useRequest } from './shared';
 export function CalendarView({ overview, onSaved, onViewEntries, onViewTrends, disabled }: {
     overview: Overview;
     onSaved: () => Promise<void>;
@@ -14,6 +14,7 @@ export function CalendarView({ overview, onSaved, onViewEntries, onViewTrends, d
     disabled: boolean;
     onViewTrends: () => void;
 }) {
+    const request = useRequest();
     const today = todayKey(), [month, setMonth] = useState(today.slice(0, 7)), [date, setDate] = useState(today), [drafts, setDrafts] = useState<Record<string, {
         score: number | null;
         note: string;
