@@ -1,0 +1,136 @@
+/* Apple風: 読む内容は安定した面、操作はその上に浮くガラス層。 */
+:root[data-ui=apple] {
+  --background:#090a0d; --foreground:#f5f5f7; --surface:#1c1c20; --surface-soft:#27272c;
+  --card:#1c1c20; --card-foreground:#f5f5f7; --popover:#242429; --popover-foreground:#f5f5f7;
+  --muted:#27272c; --muted-foreground:#acacb4; --border:#39393f; --input:#4a4a52; --line:#42424a;
+  --primary:#85baff; --primary-foreground:#061b35; --accent:#27364d; --accent-foreground:#c8e1ff; --ring:#85baff;
+  --secondary:#303037; --secondary-foreground:#f5f5f7; --card-radius:28px; --control-radius:18px;
+  --body-font:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Hiragino Sans",sans-serif;
+  --glass-fill:rgba(47,49,57,.78); --glass-edge:rgba(255,255,255,.27); --glass-shine:rgba(255,255,255,.2);
+  --glass-shadow:0 8px 30px #0005,inset 0 1px 0 var(--glass-shine),inset 0 -1px 0 #ffffff08;
+}
+:root[data-ui=apple][data-skin=paper] {
+  --background:#f2f2f7; --foreground:#1c1c1e; --surface:#fff; --surface-soft:#f0f0f5;
+  --card:#fff; --card-foreground:#1c1c1e; --popover:#fff; --popover-foreground:#1c1c1e;
+  --muted:#eaeaef; --muted-foreground:#62626d; --border:#d9d9e2; --input:#bcbcc7; --line:#c6c6d1;
+  --primary:#0064d2; --primary-foreground:#fff; --accent:#e2eeff; --accent-foreground:#004899; --ring:#0064d2;
+  --secondary:#e9e9f0; --secondary-foreground:#1c1c1e;
+  --glass-fill:rgba(250,250,255,.8); --glass-edge:rgba(255,255,255,.95); --glass-shine:#fff;
+  --glass-shadow:0 8px 30px #23233920,inset 0 1px 0 #fff,inset 0 -1px 0 #ffffff90;
+}
+:root[data-ui=apple][data-skin=ink]{--background:#000;--surface:#19191b;--surface-soft:#242426;--glass-fill:rgba(38,38,40,.85)}
+[data-ui=apple] body{background:radial-gradient(ellipse at 90% 0,color-mix(in srgb,var(--primary) 8%,transparent),transparent 480px),var(--background)}
+[data-ui=apple] .app-shell{max-width:1120px}
+[data-ui=apple] .app-header{height:72px}
+[data-ui=apple] .brand{font-size:20px;letter-spacing:0;gap:8px;font-weight:650}
+[data-ui=apple] .brand-icon{background:none;width:28px;height:32px;color:var(--primary)}
+[data-ui=apple] .brand small,[data-ui=apple] .private-label,[data-ui=apple] .tap-hint{display:none}
+[data-ui=apple] .header-actions{gap:10px}
+[data-ui=apple] .page-heading{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin:12px 0 20px}
+[data-ui=apple] .page-heading .heading-note{order:-1;font-size:14px;font-weight:600;color:var(--muted-foreground)}
+[data-ui=apple] .page-heading h1{font-family:var(--body-font);font-size:34px;font-weight:750;letter-spacing:-.035em;line-height:1.3}
+[data-ui=apple] h2{letter-spacing:-.025em}
+[data-ui=apple] .eyebrow{display:none}
+/* 共通のガラス層。背面の文字が読めなくならないよう着色を残す。 */
+[data-ui=apple] :is(.header-actions .icon-button,.timeline-actions .icon-button,.timeline-actions .secondary-button,.floating-compose),
+[data-ui=apple].app-shell .main-nav[data-slot=tabs-list] {
+  border:1px solid var(--glass-edge); background:linear-gradient(145deg,var(--glass-shine),transparent 45%),var(--glass-fill);
+  box-shadow:var(--glass-shadow); backdrop-filter:blur(22px) saturate(155%); -webkit-backdrop-filter:blur(22px) saturate(155%);
+  color:var(--foreground); border-radius:999px;
+}
+[data-ui=apple] .header-actions .icon-button{width:44px;height:44px}
+[data-ui=apple].app-shell .main-nav[data-slot=tabs-list]{height:74px;max-width:680px;padding:7px;gap:4px;bottom:calc(14px + env(safe-area-inset-bottom));border-radius:38px}
+[data-ui=apple].app-shell .main-nav [role=tab]{flex:1;min-width:0;height:58px;min-height:58px;flex-direction:column;gap:2px;font-size:12px;font-weight:600;border-radius:30px;color:var(--muted-foreground)}
+[data-ui=apple].app-shell .main-nav [role=tab][data-state=active]{color:var(--primary);background:color-mix(in srgb,var(--foreground) 10%,transparent);box-shadow:inset 0 1px 0 var(--glass-shine),0 2px 8px #0001}
+[data-ui=apple].app-shell .main-nav svg{width:22px;height:22px;stroke-width:2}
+[data-ui=apple] .checkin-card{border:0;background:var(--surface);padding:18px;border-radius:28px;box-shadow:0 2px 12px #0001}
+[data-ui=apple] .checkin-card .section-heading{margin:0 0 12px}
+[data-ui=apple] .checkin-card h2{font-size:18px;font-weight:650}
+[data-ui=apple] .moods{gap:10px;margin:10px 0 14px}
+[data-ui=apple] .mood{border:1px solid color-mix(in srgb,var(--mood-color) 20%,var(--border));border-radius:50%;height:auto;min-height:44px;aspect-ratio:1;max-height:62px;max-width:62px;width:100%;justify-self:center;background:linear-gradient(145deg,color-mix(in srgb,var(--mood-color) 18%,transparent),transparent),var(--surface-soft);box-shadow:inset 0 1px 0 #ffffff10}
+[data-ui=apple] .mood svg{width:30px;height:30px}
+[data-ui=apple] .mood.chosen{background:var(--mood-color);color:var(--background);border-color:var(--mood-color);box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--mood-color)}
+[data-ui=apple] .checkin-card .composer{border:0;padding:0}
+[data-ui=apple] .checkin-card .composer textarea{height:46px;min-height:46px;background:var(--surface-soft);border:1px solid var(--input);border-radius:16px;padding:9px 11px;margin-bottom:12px;resize:none}
+[data-ui=apple] .tag-quick-label{font-size:12px;margin:4px 0 6px}
+[data-ui=apple] .catalog-chip{font-size:14px;min-height:36px;padding:6px 10px;background:var(--surface-soft);border-color:transparent}
+[data-ui=apple] .catalog-chip.in-cart{background:var(--accent);color:var(--primary);opacity:1}
+[data-ui=apple] .tag-add{background:var(--surface-soft);border-radius:50%!important;border:0!important}
+[data-ui=apple] .tag-disclosure-toggle{background:transparent;border-color:transparent;color:var(--primary);padding-left:0}
+[data-ui=apple] .tag-disclosure-toggle[aria-expanded=true]{background:transparent}
+[data-ui=apple] .tag-disclosure-bottom{background:var(--surface-soft);border:0;color:var(--primary)}
+[data-ui=apple] .tag-folder{border:0;padding:5px 12px;border-radius:20px;background:var(--surface-soft)}
+[data-ui=apple] .tag-folder summary{font-size:15px;font-weight:600}
+[data-ui=apple] .tag-folder .catalog-chip{background:var(--surface);border:1px solid var(--border)}
+[data-ui=apple] .tag-cart{border:0;border-radius:20px;background:var(--surface-soft)}
+[data-ui=apple] .quantity-stepper{border:0;background:var(--surface);border-radius:14px}
+[data-ui=apple] .cart-heading{font-weight:600}
+[data-ui=apple] .checkin-card .backdate-field{padding:12px;border:0;border-radius:20px;background:var(--surface-soft)}
+[data-ui=apple] .checkin-card .backdate-field input{background:var(--surface);border-radius:12px}
+[data-ui=apple] :is(.send-button,.primary-button,.floating-compose){border-radius:999px;min-height:44px;background:var(--primary);color:var(--primary-foreground);font-weight:650}
+[data-ui=apple] .checkin-card .send-button{min-width:104px}
+/* 履歴は吹き出しの積み重ねから、日付ごとの連続した記録面へ。 */
+[data-ui=apple] .timeline-section{margin-top:30px}
+[data-ui=apple] .timeline-section>.section-heading{align-items:center;margin-bottom:18px}
+[data-ui=apple] .timeline-section h2{font-size:21px;font-weight:700}
+[data-ui=apple] .timeline-actions{gap:6px}
+[data-ui=apple] .timeline-actions .secondary-button{color:var(--primary);padding:8px 12px}
+[data-ui=apple] .history-day{background:var(--surface);border-radius:26px;overflow:hidden;margin-bottom:18px;padding:0}
+[data-ui=apple] .day-heading{padding:14px 18px 4px;margin:0;color:var(--muted-foreground)}
+[data-ui=apple] .day-heading h3{font-size:13px;font-weight:600}
+[data-ui=apple] .day-heading::after{display:none}
+[data-ui=apple] .entry{padding:12px 16px 0;margin:0;gap:12px;align-items:stretch}
+[data-ui=apple] .entry:last-child{padding-bottom:12px}
+[data-ui=apple] .entry-rail{width:36px;background:var(--surface)}
+[data-ui=apple] .entry-mood,[data-ui=apple] .entry-time{background:var(--surface)}
+[data-ui=apple] .entry-bubble{background:transparent;border:0;border-bottom:1px solid var(--border);border-radius:0;padding:4px 34px 16px 0;min-height:58px}
+[data-ui=apple] .entry:last-child .entry-bubble{border-bottom:0;padding-bottom:4px}
+[data-ui=apple] .entry-top{right:-8px;top:0}
+[data-ui=apple] .entry-note{font-size:16px;line-height:1.65}
+[data-ui=apple] .entry.connected-next::before{left:33px;top:32px;bottom:-30px;background:var(--line)}
+[data-ui=apple] .entry-gap{padding:14px 18px 0 64px;font-size:12px}
+[data-ui=apple] .recorded-tag{background:var(--accent);border:0;color:var(--primary)}
+[data-ui=apple] .history-tools{border:0;border-radius:24px;background:var(--surface)}
+/* カレンダー・統計・管理も同じ内容面と操作部の階層に揃える。 */
+[data-ui=apple] :is(.calendar-card,.calendar-day-stats,.wave-card,.chart-card,.analysis-card,.stat-card,.summary-card,.week-card,.time-axis-section,.tag-manager-group){background:var(--surface);border:0;border-radius:28px;box-shadow:none;padding:20px}
+[data-ui=apple] .calendar-day-stats{padding:20px}
+[data-ui=apple] .month-title h2{font-size:30px;font-weight:700;letter-spacing:-.04em}
+[data-ui=apple] .calendar-grid{gap:5px}
+[data-ui=apple] .calendar-day{border-radius:16px}
+[data-ui=apple] .calendar-date{font-size:18px}
+[data-ui=apple] .calendar-help{color:var(--primary)}
+[data-ui=apple] .stat-grid{gap:10px}
+[data-ui=apple] .stat-card strong{font-family:var(--body-font);font-size:38px;font-weight:700;letter-spacing:-.04em;color:var(--foreground)}
+[data-ui=apple] .wave-segments{background:var(--surface-soft);border:0;border-radius:12px}
+[data-ui=apple] .wave-segments button[aria-pressed=true]{background:var(--surface);box-shadow:0 2px 6px #0002;border-radius:9px;font-weight:600}
+[data-ui=apple] :is(.text-input,.search-field){background:var(--surface-soft);border-radius:14px}
+[data-ui=apple] .journal-dialog{background:var(--surface);border:1px solid var(--glass-edge);border-radius:30px;box-shadow:var(--glass-shadow)}
+[data-ui=apple] .journal-dialog>h2{font-size:23px;font-weight:700}
+[data-ui=apple] .journal-dialog>[data-slot=dialog-close]{background:var(--surface-soft);border-radius:50%;width:36px;height:36px;display:grid;place-items:center;right:14px;top:14px}
+[data-ui=apple] .interface-option[data-slot=toggle-group-item],[data-ui=apple] .layout-option[data-slot=toggle-group-item]{background:var(--surface-soft);border-color:transparent;border-radius:20px!important}
+[data-ui=apple] .interface-option[data-state=on],[data-ui=apple] .layout-option[data-state=on]{background:var(--accent);outline:2px solid var(--primary)}
+[data-ui=apple] .demo-banner{background:var(--surface);border:0;border-radius:22px}
+[data-ui=apple] .demo-launch{background:var(--surface-soft);border:0;border-radius:20px}
+[data-ui=apple] .app-footer{border:0}
+@media(max-width:780px){
+  [data-ui=apple] .app-shell{padding-left:16px;padding-right:16px}
+  [data-ui=apple] .app-header{height:66px}
+  [data-ui=apple] .page-heading{margin-top:8px;margin-bottom:18px}
+  [data-ui=apple] .checkin-card{padding:16px}
+  [data-ui=apple] .moods{gap:8px}
+  [data-ui=apple] .timeline-section>.section-heading{flex-wrap:wrap;gap:8px}
+  [data-ui=apple] .timeline-actions{margin-left:auto}
+  [data-ui=apple] .calendar-card{padding:18px 12px}
+  [data-ui=apple] .wave-card,[data-ui=apple] .chart-card,[data-ui=apple] .analysis-card{padding:20px 16px}
+  [data-ui=apple] .journal-dialog:not(.composer-sheet){top:auto;bottom:10px;transform:translateX(-50%);translate:none;max-height:90dvh;width:calc(100vw - 16px);padding:26px 20px 20px}
+  [data-ui=apple] .composer-sheet{padding:24px 16px}
+  [data-ui=apple] .composer-sheet .checkin-card{padding:0;background:transparent}
+}
+@media(prefers-reduced-transparency:reduce){
+  :root[data-ui=apple]{--glass-fill:var(--surface)}
+  [data-ui=apple] :is(.main-nav,.icon-button,.secondary-button,.floating-compose){backdrop-filter:none;-webkit-backdrop-filter:none}
+}
+@media(prefers-contrast:more){
+  :root[data-ui=apple]{--glass-fill:var(--surface);--glass-edge:var(--foreground)}
+  [data-ui=apple] .catalog-chip{border-color:var(--foreground)}
+}
