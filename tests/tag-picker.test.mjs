@@ -45,11 +45,13 @@ test('タグ選択: 上下の開閉ボタンは同じ領域と展開状態を示
   for (const expanded of [false, true]) {
     const html = render(expanded);
     const controls = [...html.matchAll(/aria-controls="([^"]+)"/g)].map(m => m[1]);
-    assert.equal(controls.length, 2);
-    assert.equal(controls[0], controls[1]);
+    assert.equal(controls.length, expanded ? 2 : 1);
+    if (expanded) assert.equal(controls[0], controls[1]);
     assert(html.includes('id="' + controls[0] + '"'));
-    assert.equal([...html.matchAll(new RegExp('aria-expanded="' + expanded + '"', 'g'))].length, 2);
-    assert(html.includes(expanded ? '下からタグ・日時を閉じる' : '下からタグ・日時を開く'));
+    assert.equal([...html.matchAll(new RegExp('aria-expanded="' + expanded + '"', 'g'))].length, expanded ? 2 : 1);
+    assert.equal(html.includes('下からタグ・日時を閉じる'), expanded);
+    assert(!html.includes('下からタグ・日時を開く'));
+    assert.equal(html.includes('tag-disclosure-bottom'), expanded);
     assert.equal(html.includes('グループ別のタグ'), expanded);
     assert.equal(html.includes('投稿の日時'), expanded);
   }

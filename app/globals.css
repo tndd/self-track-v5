@@ -242,3 +242,6 @@ button,input,textarea,select{font:inherit}
 .checkin-card .backdate-field small{grid-column:1}
 .checkin-card .backdate-field input{max-width:100%}
 .edit-fields textarea,.summary-editor textarea{resize:none}
+
+/* 下の矢印が非表示でも送信は右端に保つ。 */
+.tag-picker .composer-footer .send-button{margin-left:auto}
