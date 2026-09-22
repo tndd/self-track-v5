@@ -1,0 +1,89 @@
+/* 入力の主操作は一行。開閉しても位置とラベルの幅を変えない。 */
+.checkin-card .composer { border-top: 0; padding-top: 0; }
+.tag-disclosure-heading { display: flex; align-items: center; gap: 8px; }
+.checkin-card .tag-disclosure-toggle { flex: 1; width: auto; min-width: 0; max-width: none; min-height: 44px; }
+.tag-disclosure-heading .send-button { flex: 0 0 auto; min-width: 88px; min-height: 44px; padding: 7px 14px; }
+.tag-picker .composer-footer { justify-content: center; margin-top: 8px; }
+.tag-disclosure-heading + .tag-expanded-content { scroll-margin-top: 16px; }
+.previous-layouts > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--muted-foreground); font-size: 13px; }
+.previous-layouts .layout-options { margin-top: 8px; }
+
+/* 一枚: 書くと読むを同時に要求しない。 */
+.app-shell[data-layout=focus], .app-shell[data-layout=dock] { max-width: 800px; }
+.focus-experience { max-width: 600px; margin: 12px auto 0; }
+.focus-switch { display: flex; width: fit-content; margin: 0 auto; padding: 4px; border-radius: 999px; background: var(--surface-soft); }
+.focus-switch button { display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 8px 18px; border-radius: 999px; font-size: 14px; color: var(--muted-foreground); }
+.focus-switch button[aria-pressed=true] { background: var(--surface); color: var(--foreground); box-shadow: 0 2px 8px #0001; }
+.focus-hero { text-align: center; padding: 22px 0 12px; }
+.focus-hero > p { font-size: 13px; color: var(--muted-foreground); }
+.focus-face { display: flex; justify-content: center; color: var(--mood-color); margin: 22px auto 14px; }
+.focus-hero h1 { font-size: 30px; font-weight: 500; letter-spacing: -.03em; margin-bottom: 5px; }
+.app-shell[data-layout=focus] .checkin-card { border: 0; background: transparent; padding: 8px 0; box-shadow: none; }
+[data-layout=focus] .checkin-card > .section-heading { display: none; }
+[data-layout=focus] .checkin-card .moods { margin: 10px 0 16px; gap: 10px; }
+[data-layout=focus] .checkin-card .mood { border-radius: 999px; height: 52px; min-height: 52px; }
+[data-layout=focus] .checkin-card .composer textarea { height: 48px; min-height: 48px; padding: 10px 12px; margin-bottom: 10px; }
+[data-layout=focus] .tag-quick-label { margin-top: 4px; }
+[data-layout=focus] .timeline-section { margin-top: 24px; }
+[data-layout=focus][data-record-active=true] .app-footer { border-top: 0; }
+
+/* 会話: 履歴だけがスクロールし、入力は通常のレイアウト内で下端に残る。 */
+.app-shell[data-layout=dock][data-record-active=true] { height: 100dvh; min-height: 420px; display: flex; flex-direction: column; padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
+[data-layout=dock][data-record-active=true] .app-header { flex: 0 0 62px; height: 62px; }
+[data-layout=dock][data-record-active=true] .demo-banner { flex: 0 0 auto; margin: 0 0 8px; padding: 8px 12px; }
+[data-layout=dock][data-record-active=true] .demo-banner small { display: none; }
+[data-layout=dock][data-record-active=true] .app-tabs { flex: 1; min-height: 0; }
+[data-layout=dock][data-record-active=true] .tab-panel[data-state=active] { flex: 1; min-height: 0; }
+[data-layout=dock][data-record-active=true] .app-footer { display: none; }
+.dock-experience { height: 100%; min-height: 0; display: flex; flex-direction: column; }
+.dock-caption { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0 12px; }
+.dock-caption h1 { font-size: 18px; font-weight: 500; }
+.dock-caption > span { font-size: 12px; color: var(--muted-foreground); }
+.dock-history { flex: 1 1 0; min-height: 100px; overflow-y: auto; overscroll-behavior-y: contain; scrollbar-width: thin; padding: 0 3px 14px; scroll-padding: 10px; }
+.dock-history .timeline-section { margin-top: 0; }
+.dock-history .timeline-section > .section-heading h2 { font-size: 14px; color: var(--muted-foreground); }
+.dock-history .timeline-section > .section-heading .eyebrow { display: none; }
+.dock-history .entry-bubble { background: transparent; border: 0; box-shadow: none; }
+.dock-history .entry-note { font-size: 15px; }
+.dock-composer { flex: 0 0 auto; min-height: 0; max-height: 52dvh; overflow-y: auto; overscroll-behavior-y: contain; margin-top: 4px; border-radius: 24px; background: var(--surface); box-shadow: 0 -6px 24px #0001; }
+.app-shell[data-layout=dock] .dock-composer .checkin-card { padding: 12px; border: 1px solid var(--border); border-radius: 24px; background: transparent; box-shadow: none; }
+.dock-composer .checkin-card > .section-heading { display: none; }
+.dock-composer .checkin-card .moods { margin: 0 0 8px; gap: 8px; }
+.dock-composer .checkin-card .mood { min-height: 44px; height: 44px; padding: 4px; border-radius: 16px; }
+.dock-composer .checkin-card .composer textarea { margin: 0 0 8px; min-height: 42px; height: 42px; }
+.dock-composer .tag-quick-label { display: none; }
+.dock-composer .catalog-chip { min-height: 34px; padding: 5px 9px; }
+.dock-composer .tag-disclosure-heading { margin-top: 5px; }
+
+/* 日めくり: 一日を紙面として扱い、記録を追加するときだけ入力を開く。 */
+.daybook-experience { max-width: 620px; margin: 0 auto; padding-bottom: 76px; }
+.day-page { padding: 12px 0 18px; border-bottom: 1px solid var(--border); }
+.day-page-top, .day-page-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.day-page-top { color: var(--muted-foreground); font-size: 13px; }
+.day-page-picker { position: relative; cursor: pointer; }
+.day-page-picker input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.day-page-date { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; margin: 8px 0 16px; }
+.day-page-date > h1 { display: flex; flex-direction: column; align-items: center; line-height: 1.05; letter-spacing: -.06em; }
+.day-page-date h1 > span { font-size: 14px; letter-spacing: .05em; font-weight: 400; color: var(--muted-foreground); }
+.day-page-date h1 > strong { font-size: clamp(72px, 20vw, 108px); font-weight: 300; font-variant-numeric: tabular-nums; margin: 5px 0 10px; }
+.day-page-summary { display: flex; justify-content: center; align-items: center; gap: 20px; color: var(--muted-foreground); font-size: 12px; }
+.day-page-summary > span { display: flex; align-items: center; gap: 6px; }
+.day-page-summary .mood-1, .day-page-summary .mood-2, .day-page-summary .mood-3, .day-page-summary .mood-4, .day-page-summary .mood-5 { color: var(--mood-color); }
+.daybook-experience .timeline-section > .section-heading { margin-top: 18px; }
+.daybook-experience .timeline-section > .section-heading h2 { font-size: 16px; }
+.daybook-experience .timeline-section > .section-heading .eyebrow, .daybook-experience .day-heading { display: none; }
+.daybook-experience .entry-bubble { background: transparent; border: 0; }
+.daybook-compose { position: fixed; z-index: 35; bottom: calc(94px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); border-radius: 999px; min-height: 48px; box-shadow: 0 4px 18px #0002; }
+@media (max-height: 640px) {
+    [data-layout=focus][data-record-active=true] .app-header { height: 62px; }
+    [data-layout=focus][data-record-active=true] .demo-banner { margin: 0 0 8px; padding: 8px 12px; }
+    [data-layout=focus][data-record-active=true] .demo-banner small { display: none; }
+    .focus-hero { padding-top: 10px; }
+    .focus-face { margin: 10px 0; }
+    .focus-face svg { width: 48px; height: 48px; }
+    .focus-hero h1 { font-size: 26px; }
+    .dock-composer { max-height: 58dvh; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .focus-experience *, .dock-experience *, .daybook-experience * { scroll-behavior: auto; transition: none; }
+}

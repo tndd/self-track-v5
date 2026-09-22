@@ -32,9 +32,9 @@ export function MoodButtons({ onPick, selected, disabled = false, label = 'そ�
     label?: string;
 }) { return <div className="moods" role="group" aria-label={label}>{MOODS.map(m => <button type="button" key={m.score} className={`mood mood-${m.score} ${selected === m.score ? 'chosen' : ''}`} disabled={disabled} onClick={() => onPick(m.score)} aria-pressed={selected === m.score} aria-label={`${label}${m.score} ${m.label}`} title={`${m.score} · ${m.label}`}><MoodIcon score={m.score}/></button>)}</div>; }
 
-export function TagPicker({ all, value, onChange, onAdd, catalog, usage = {}, expanded = true, onToggle, expandedContent, footerAction, quantities = {}, onQuantities }: {
+export function TagPicker({ all, value, onChange, onAdd, catalog, usage = {}, expanded = true, onToggle, expandedContent, footerAction, quickLimit = 6, quantities = {}, onQuantities }: {
     all: string[]; value: string[]; onChange: (v: string[]) => void; onAdd: () => void;
-    catalog?: Catalog; usage?: Record<string, number>; expanded?: boolean; onToggle?: () => void; expandedContent?: ReactNode; footerAction?: ReactNode;
+    catalog?: Catalog; usage?: Record<string, number>; expanded?: boolean; onToggle?: () => void; expandedContent?: ReactNode; footerAction?: ReactNode; quickLimit?: number;
     quantities?: Record<string, number>; onQuantities?: (v: Record<string, number>) => void;
 }) {
     const active = catalog?.tags.filter(t => !t.archived) ?? [];
@@ -50,14 +50,14 @@ export function TagPicker({ all, value, onChange, onAdd, catalog, usage = {}, ex
     const choiceRow = (names: string[], label: string, includeAdd = false) => <div className="tag-wrap tag-choice-row">{chips(names, label)}{includeAdd && <button type="button" className="tag-add" onClick={onAdd} aria-label="新しいタグを追加"><Plus size={18}/></button>}</div>;
     return <div className="tag-picker">
       <div className="tag-quick-label"><Sparkles size={13}/>{FREQUENT}{!frequent.length && <small>まずはここから</small>}</div>
-      {choiceRow(defaultNames, 'よく使うタグ', true)}
-      {onToggle && <div className="tag-disclosure-heading"><button ref={toggleRef} type="button" className="details-toggle tag-disclosure-toggle" aria-expanded={expanded} aria-controls={panelId} onClick={onToggle}><SlidersHorizontal size={16}/><span>{expanded ? 'タグ・日時を閉じる' : 'タグ・日時'}</span>{expanded ? <ChevronUp size={16}/> : <ChevronDown size={16}/>}</button></div>}
+      {choiceRow(defaultNames.slice(0, quickLimit), 'よく使うタグ', true)}
+      {onToggle && <div className="tag-disclosure-heading"><button ref={toggleRef} type="button" className="details-toggle tag-disclosure-toggle" aria-label={expanded ? 'タグ・日時を閉じる' : 'タグ・日時'} aria-expanded={expanded} aria-controls={panelId} onClick={onToggle}><SlidersHorizontal size={16}/><span>タグ・日時</span>{expanded ? <ChevronUp size={16}/> : <ChevronDown size={16}/>}</button>{footerAction}</div>}
       <div id={panelId} hidden={!expanded} className="tag-expanded-content">
       {expanded && catalog && <div className="tag-folders" aria-label="グループ別のタグ">{catalog.groups.map(g => ({name: g, tags: active.filter(t => t.group === g).map(t => t.name)})).map(g => <details className="tag-folder" key={g.name} open><summary><Folder size={18}/><span>{g.name}</span><small>{g.tags.length}</small></summary><div className="tag-wrap">{g.tags.length ? chips(g.tags, `${g.name}のタグ`) : <span className="metadata">タグはまだありません</span>}</div></details>)}</div>}
       {expanded && expandedContent}
       </div>
       {value.length > 0 && <section className="tag-cart" aria-label="今回のタグ"><div className="cart-heading"><span>今回のタグ <b>{value.length}</b></span><small>送信で確定</small></div><ul>{value.map(t => { const quantity = quantities[t] ?? 1; return <li key={t}><Tag size={16}/><span className="cart-tag-name">{t}</span>{onQuantities && <div className="quantity-stepper"><button type="button" aria-label={`${t}を1減らす`} disabled={!Number.isFinite(quantity) || quantity <= 1} onClick={() => onQuantities({...quantities, [t]: Math.max(1, quantity - 1)})}><Minus size={15}/></button><input aria-label={`${t}の数量・強度`} type="number" inputMode="decimal" min="0.01" max="1000000" step="any" value={Number.isNaN(quantity) ? '' : quantity} onChange={e => onQuantities({...quantities, [t]: e.target.valueAsNumber})}/><button type="button" aria-label={`${t}を1増やす`} disabled={!Number.isFinite(quantity) || quantity >= 1000000} onClick={() => onQuantities({...quantities, [t]: Math.min(1000000, quantity + 1)})}><Plus size={15}/></button></div>}<button type="button" className="cart-remove" aria-label={`${t}を外す`} onClick={() => onChange(value.filter(n => n !== t))}><X size={16}/></button></li>; })}</ul><p className="cart-hint">数値は今回だけ。数字をタップすると小数も入力できます。</p></section>}
-      {onToggle && <div className="composer-footer">{expanded && <button type="button" className="details-toggle tag-disclosure-bottom" aria-label="下からタグ・日時を閉じる" aria-expanded={expanded} aria-controls={panelId} onClick={toggleFromBottom}><ChevronUp size={18}/></button>}{footerAction}</div>}
+      {onToggle && expanded && <div className="composer-footer"><button type="button" className="details-toggle tag-disclosure-bottom" aria-label="下からタグ・日時を閉じる" aria-expanded={expanded} aria-controls={panelId} onClick={toggleFromBottom}><ChevronUp size={18}/></button></div>}
     </div>;
 }
 
