@@ -122,8 +122,8 @@
   [data-ui=apple] .timeline-actions{margin-left:auto}
   [data-ui=apple] .calendar-card{padding:18px 12px}
   [data-ui=apple] .wave-card,[data-ui=apple] .chart-card,[data-ui=apple] .analysis-card{padding:20px 16px}
-  /* 中央配置のtranslateと開閉アニメーションを残さず、左右の余白で配置する。 */
-  [data-ui=apple] .journal-dialog[data-slot=dialog-content]{top:auto;bottom:calc(10px + env(safe-area-inset-bottom));left:8px;right:8px;margin-inline:auto;transform:none;translate:none;animation:none;max-height:calc(100dvh - 20px - env(safe-area-inset-bottom));width:auto;max-width:600px;padding:26px 20px 20px}
+  /* UI切替中も共通ダイアログの中央配置を保つ。位置の基準を変えると開閉時に画面外へ飛ぶ。 */
+  [data-ui=apple] .journal-dialog[data-slot=dialog-content]{animation:none;max-height:calc(100dvh - 20px - env(safe-area-inset-bottom));max-width:min(600px,calc(100% - 16px));padding:26px 20px 20px}
   [data-ui=apple] .composer-sheet{padding:24px 16px}
   [data-ui=apple] .composer-sheet .checkin-card{padding:0;background:transparent}
 }
