@@ -63,3 +63,10 @@ export async function readOverview(db: D1Database, user: string) {
             tagMap.set(t.date as string, [...(tagMap.get(t.date as string) || []), t.tag as string]);
         return { days: days.results.map(d => ({ ...d, tags: tagMap.get(d.date as string) || [] })), tags: [...new Set(tags.results.map(t => t.tag))], summaries: summaries.results };
 }
+
+// 統計用にはコメント・数量を送らず、必要な時刻・体調・タグだけを利用者別に取得。
+export async function readAnalysisRecords(db: D1Database, user: string, start: string, end: string) {
+    const result=await db.prepare('SELECT id,date,recorded_at AS recordedAt,score,tags FROM entries WHERE user_id=? AND date>=? AND date<=? ORDER BY recorded_at,id LIMIT 20001').bind(user,start,end).all<Record<string,unknown>>();
+    const tooMany=result.results.length>20000;
+    return {tooMany,samples:tooMany?[]:result.results.map(r=>({id:r.id as string,date:r.date as string,recordedAt:r.recordedAt as string,score:r.score as number|null,tags:JSON.parse(r.tags as string) as string[]}))};
+}
